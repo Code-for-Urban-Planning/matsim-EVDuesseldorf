@@ -9,9 +9,33 @@
 
 ### About this project
 
-This repository provides an open MATSim transport model for Düsseldorf, provided by the [Transport Systems Planning and Transport Telematics group](https://www.vsp.tu-berlin.de) of [Technische Universität Berlin](http://www.tu-berlin.de).
+This repository works on changing demand estimation for Electric Vehicles (EV) using a basic energy consumption model through the MATSim transport model for Düsseldorf, provided by the [Transport Systems Planning and Transport Telematics group](https://www.vsp.tu-berlin.de) of [Technische Universität Berlin](http://www.tu-berlin.de). The code builds on the assumption of 100% adoption for just private cars (not including taxis or buses/pt). The goal is to identify the optimal location of chargers using iterative simulations while estimating charging demands by adding charging activities at the end of trips based on crude charging behaviour assumptions. The objectives of this exercise are as follows.
+- Set charging infrastructure (public, work, home chargers)
+- Track (memory) and set specifications and attributes for EV_cars and charging infrastructure.
+- Track each private EV car for distance travelled and SoC levels
+- Set charging behaviour (for activities, soc levels, queuing wait..)
+- Scoring- Marginal Utility- EV_car usage, scoring for charging activity (duration, cost..)
+- Visualize output (charging demands -Grid, mode shift..)
 
-<a rel="TU Berlin" href="https://www.vsp.tu-berlin.de"><img src="https://svn.vsp.tu-berlin.de/repos/public-svn/ueber_uns/logo/TU_BERLIN_Logo_Lang_RGB_SR_rot.svg" width="25%"/></a>
+1. Setting charging infrastructure: Activity plans (parking- home, work, shopping, leisure, misc..)
+    - Home chargers: One charging plug per each private EV_car; Charger capacity- 7kW
+    - Work chargers: uniform distance- 2km; Charger capacity- 22kW
+    - Public Chargers: Shopping and leisure activity stops; uniform distance- 5km; Charger capacity- 22kW
+
+2. Charging behaviour introduced (Methods: chargeAtHome, chargeAtWork, chargeAtPublic)
+    - Home Charging: If the EV is at home and has any available time, it charges up to 95%.
+    - Work Charging: EV charges at work if SoC is below 70% until 95% and if the charger is within 5 km.
+    - Public Charging: EV charges at public locations until 95% and if SoC is below 50% and the charger is within 10 km.
+    - Emergency Charging: If SoC drops below 30%, EV prioritizes charging to above 70% at a public charger within 20 km before continuing activities.
+
+3. Assumptions for scenario
+    - Uniform Battery Capacity: 50 kWh for all EVs.
+    - Uniform Energy Consumption Rate: 0.2 kWh per km.
+    - Uniform Charging Power: 7 kW for home chargers, 22 kW for work and public chargers.
+    - Simplified Charging Strategy: Charge up to 95% whenever at a charger.
+    - Static Initial SoC: 100% for all vehicles.
+
+4. EV Modules (using MATSim contribs)
 
 This scenario contains a 1pct and 25pct sample of Düsseldorf and its surrounding area; road capacities are accordingly reduced. The scenario is calibrated taking into consideration the traffic counts, modal split and mode-specific trip distance distributions.
 
